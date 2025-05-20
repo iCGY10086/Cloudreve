@@ -23,6 +23,7 @@ const (
 const (
 	QuerySearchName           = "name"
 	QuerySearchNameOpOr       = "name_op_or"
+	QuerySearchUseOr          = "use_or"
 	QuerySearchMetadataPrefix = "meta_"
 	QuerySearchCaseFolding    = "case_folding"
 	QuerySearchType           = "type"
@@ -230,6 +231,10 @@ func (u *URI) SearchParameters() *inventory.SearchFileParameters {
 		res.NameOperatorOr = true
 	}
 
+	if _, ok := q[QuerySearchUseOr]; ok {
+		res.NameOperatorOr = true
+	}
+
 	if _, ok := q[QuerySearchCaseFolding]; ok {
 		res.CaseFolding = true
 	}
@@ -342,6 +347,13 @@ func NewShareUri(id, password string) string {
 		return fmt.Sprintf("%s://%s:%s@%s", constants.CloudreveScheme, id, password, constants.FileSystemShare)
 	}
 	return fmt.Sprintf("%s://%s@%s", constants.CloudreveScheme, id, constants.FileSystemShare)
+}
+
+func NewMyUri(id string) string {
+	if id == "" {
+		return fmt.Sprintf("%s://%s", constants.CloudreveScheme, constants.FileSystemMy)
+	}
+	return fmt.Sprintf("%s://%s@%s", constants.CloudreveScheme, id, constants.FileSystemMy)
 }
 
 // PathEscape is same as url.PathEscape, with modifications to incoporate with JS encodeURIComponent:

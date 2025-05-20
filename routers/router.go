@@ -97,6 +97,11 @@ func initSlaveFileRouter(v4 *gin.RouterGroup) {
 		file.DELETE("",
 			controllers.FromJSON[explorer.SlaveDeleteFileService](explorer.SlaveDeleteFileParamCtx{}),
 			controllers.SlaveDelete)
+		// 列出文件
+		file.GET("list",
+			controllers.FromQuery[explorer.SlaveListService](explorer.SlaveListParamCtx{}),
+			controllers.SlaveList,
+		)
 	}
 }
 
@@ -123,9 +128,6 @@ func initSlaveRouter(dep dependency.Dep) *gin.Engine {
 		// // 测试 Aria2 RPC 连接
 		// v4.POST("ping/aria2", controllers.AdminTestAria2)
 		initSlaveFileRouter(v4)
-
-		// 列出文件
-		v4.POST("list", controllers.SlaveList)
 
 		// 离线下载
 		download := v4.Group("download")
@@ -682,6 +684,12 @@ func initMasterRouter(dep dependency.Dep) *gin.Engine {
 			file.PUT("viewerSession",
 				controllers.FromJSON[explorer.CreateViewerSessionService](explorer.CreateViewerSessionParamCtx{}),
 				controllers.CreateViewerSession,
+			)
+			// Create task to import files
+			wf.POST("import",
+				middleware.IsAdmin(),
+				controllers.FromJSON[explorer.ImportWorkflowService](explorer.CreateImportParamCtx{}),
+				controllers.ImportFiles,
 			)
 
 			// 取得文件外链

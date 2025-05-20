@@ -185,6 +185,14 @@ func SlaveMediaMetaRoute(src, ext string) string {
 	return fmt.Sprintf("file/meta/%s/%s", src, url.PathEscape(ext))
 }
 
+func SlaveFileListRoute(srcPath string, recursive bool) string {
+	base := "file/list"
+	query := url.Values{}
+	query.Set("recursive", strconv.FormatBool(recursive))
+	query.Set("path", srcPath)
+	return fmt.Sprintf("%s?%s", base, query.Encode())
+}
+
 func SlaveThumbUrl(base *url.URL, srcPath, ext string) *url.URL {
 	srcPath = url.PathEscape(base64.URLEncoding.EncodeToString([]byte(srcPath)))
 	ext = url.PathEscape(ext)
